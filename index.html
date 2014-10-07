@@ -151,7 +151,7 @@ layout: false
 ]
 .right-column[
 
-- Sparc
+- Spark
 
 - Scalding
 
@@ -250,6 +250,8 @@ Users' profiles:
 
 - Great drivers
 
+- Written in Java :)
+
 ]
 ---
 # Storage
@@ -302,6 +304,25 @@ Products:
 
 - Cassandra Datastax Java drivers (Google's futures)
 
+- And, _sure_
+
+]
+---
+# Cool stuff
+.left-column[
+  ## We code
+]
+.right-column[
+
+- Twitter's Finagle
+
+- Twitter's futures
+
+- Cassandra Datastax Java drivers (Google's futures)
+
+- And, _sure_, we have Akka
+
+- ... and Spray
 ]
 ---
 # Cool stuff
@@ -484,22 +505,86 @@ testCaseWithResult => {
 }```
 ]
 ---
-# Loops
+# Spray.io
 .left-column[
-  ## Reference
-  ## While
-  ## Do-while
-  ## Are the same
-  ## For
+  ## Upload
 ]
 .right-column[
-Example:
-```{.scala}
-var a = 0;
-for( a <- 1 to 10) {
-  println ( "Value of a: " + a );
-}
-```
+We use it as a server side for XML upload
+
+- Chunked upload
+
+- Huge files (gigabytes, potentialy unlimited)
+
+- Finds and processes data on the fly
+
+- And, _once again_
+]
+---
+# Spray.io
+.left-column[
+  ## Upload
+]
+.right-column[
+We use it as a server side for XML upload
+
+- Chunked upload
+
+- Huge files (gigabytes, potentialy unlimited)
+
+- Finds and processes data on the fly
+
+- And, _once again_, non-blocking
+]
+---
+# Spray.io
+.left-column[
+  ## Upload
+  ## Pull parse
+]
+.right-column[
+Current situation:
+
+- There are a lot of pull-parsers for jvm
+
+- But all of them are blocking:
+
+  - You subscribe for events (which seems to be asynchronous behaviour)
+
+  - _But_,
+]
+---
+# Spray.io
+.left-column[
+  ## Upload
+  ## Pull parse
+]
+.right-column[
+Current situation:
+
+- There are a lot of pull-parsers for jvm
+
+- But all of them are blocking:
+
+  - You subscribe for events (which seems to be asynchronous behaviour)
+
+  - _But_, source of data is source of blocking: InputStream, File, ...
+]
+---
+# Spray.io
+.left-column[
+  ## Upload
+  ## Pull parse
+  ## Aalto
+]
+.right-column[
+Aalto parser (half a year ago) was the only stax parser in jvm world which can be used in non-blocking xml parsing.
+
+Asynchronousness is achieved by:
+
+- Method _feedInput_ providing an array of newly available data
+
+- Parse event EVENT_INCOMPLETE, signaling that it is not enough data for parser at the moment
 ]
 ---
 # Imperative "for"
