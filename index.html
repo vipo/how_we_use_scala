@@ -540,6 +540,30 @@ We use it as a server side for XML upload
 # Spray.io
 .left-column[
   ## Upload
+  ## Chunks
+]
+.right-column[
+```{.xml}
+<root
+```
+```{.xml}
+>
+  <tag>
+    <data 
+```
+```{.xml}
+a="d"/>
+  </tag>
+```
+```{.xml}
+</root>
+```
+]
+---
+# Spray.io
+.left-column[
+  ## Upload
+  ## Chunks
   ## Pull parse
 ]
 .right-column[
@@ -557,6 +581,7 @@ Current situation:
 # Spray.io
 .left-column[
   ## Upload
+  ## Chunks
   ## Pull parse
 ]
 .right-column[
@@ -574,6 +599,7 @@ Current situation:
 # Spray.io
 .left-column[
   ## Upload
+  ## Chunks
   ## Pull parse
   ## Aalto
 ]
@@ -585,6 +611,37 @@ Asynchronousness is achieved by:
 - Method _feedInput_ providing an array of newly available data
 
 - Parse event EVENT_INCOMPLETE, signaling that it is not enough data for parser at the moment
+]
+---
+# Spray.io
+.left-column[
+  ## Upload
+  ## Chunks
+  ## Pull parse
+  ## Aalto
+  ## Too stateful
+]
+.right-column[
+
+Parser can be:
+- Not yet parsing
+
+- Parsing (consuming pull events)
+
+- Failed (illegal xml)
+
+- Waiting for input
+
+- Everything is parsed
+
+Data (chunks):
+
+- Arriving
+
+- Temporary stopped
+
+- Permanently stopped
+
 ]
 ---
 # Imperative "for"
