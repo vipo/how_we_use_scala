@@ -160,71 +160,328 @@ layout: false
 - ... any other cool stuff
 
 ]
+
 ---
-# Loops
+# DCO
 .left-column[
   ## Reference
 ]
 .right-column[
-Scala Reference defines:
 
-- while in 7 lines of text
+- Dynamic creative optimization 
 
-- do-while in 5 lines
+- _or_
 
-- for takes 3 pages
 ]
+
 ---
-# Loops
+# DCO
 .left-column[
   ## Reference
-  ## While
 ]
 .right-column[
-Example:
+
+- Dynamic creative optimization 
+
+- _or_ Dynamic content optimization 
+
+]
+---
+# DCO
+.left-column[
+  ## Reference
+  ## Which means
+]
+.right-column[
+
+We are optimizing a content of banners especially for you based on what we know about you.
+]
+
+---
+# DCO
+.left-column[
+  ## Reference
+  ## Which means
+  ## We work with
+]
+.right-column[
+
+Two things only:
+
+- Data about everyone we have ever met (profile)
+
+- Products all these good people might be interested in
+
+]
+---
+# DCO
+.left-column[
+  ## Reference
+  ## Which means
+  ## We work with
+]
+.right-column[
+
+Two things only:
+
+- Data about everyone we have ever met (profile)
+
+- Products all these good people might be interested in
+
+So, we are not evil :)
+
+]
+---
+# Storage
+.left-column[
+  ## Cassandra
+]
+.right-column[
+
+Users' profiles:
+
+- _A lot_ of data
+
+- Fast access
+
+- Clustered
+
+- Monitoring
+
+- Great drivers
+
+]
+---
+# Storage
+.left-column[
+  ## Cassandra
+  ## Redis
+]
+.right-column[
+
+Products:
+
+- Not that much data
+
+- Operations on sets: intersections, diffs
+
+- Very fast
+
+- _but_
+
+]
+---
+# Storage
+.left-column[
+  ## Cassandra
+  ## Redis
+]
+.right-column[
+
+Products:
+
+- Not that much data
+
+- Operations on sets: intersections, diffs
+
+- Very fast
+
+- _but_ choosy, requires a lot of tuning before giving awesome results
+
+]
+---
+# Cool stuff
+.left-column[
+  ## We code
+]
+.right-column[
+
+- Twitter's Finagle
+
+- Twitter's futures
+
+- Cassandra Datastax Java drivers (Google's futures)
+
+]
+---
+# Cool stuff
+.left-column[
+  ## We code
+  ## We test
+]
+.right-column[
+
+- Scalatest
+
+- Finagle is awesome for testing
+
+- Scalacheck
+
+]
+---
+# Finagle
+.left-column[
+  ## Pure
+]
+.right-column[
+Your server is a function:
 ```{.scala}
-var a = 10;
-while ( a < 20 ) {
-  println ( "Value of a: " + a );
-  a = a + 1;
+(Request => Future[Response])
+```
+
+As simple as that!
+]
+---
+# Finagle
+.left-column[
+  ## Pure
+  ## Awesome
+]
+.right-column[
+Why so awesome?
+
+```{.scala}
+test("delete profile") {
+  val service = mock[Service]
+  service.deleteProfile(123456789, 123) returns Future()
+  val resource = new ProfileResource(service)
+
+  val request = Request(DELETE, "/?c=123456789&s=123")
+
+  val response = Response(Await.result(resource(request)))
+
+  response.status should equal (OK)
+  verify(service).deleteProfile(123456789)
 }
 ```
 ]
 ---
-# Loops
+# Non-blocking at all
 .left-column[
-  ## Reference
-  ## While
-  ## Do-while
+  ## Async
 ]
 .right-column[
-Example:
+All internals (layers) must be asynchronous:
+
+- Finagle's resource gets params and calls service, service immediately returns Future of a result
+
+- Service gets params, performs some BL, calls repository and immediately return Future of a result
+
+- Repositiry gets params, calls storage's driver which immediately returns Future of a result:
+
 ```{.scala}
-var a = 10;
-do {
-  println ( "Value of a: " + a );
-  a = a + 1;
-} while ( a < 20 )
+val rs:ResultSetFuture = session.executeAsync(statement)
+```
+
+Everything is glued up via _map_, _flatMap_ and Future's helping methods like _join_. Fanagle handles everything.
+]
+---
+# Non-blocking at all
+.left-column[
+  ## Async
+  ## Not async
+]
+.right-column[
+
+But not all drivers a non-blocking. We have Redis, remember? ;)
+
+- Redis is multiplexing, like Node.js
+
+- Most drivers are blocking
+
+- Even the best ones, like Jedis
+
+Twitter's Future pool saves the day:
+```{.scala}
+val futurePool: ExecutorServiceFuturePool =
+  FuturePool.unboundedPool
+val result: Future[Long] =
+  futurePool(jedisPool.getResource.scard("key"))
+```
+Call-by-name parameters save many lines of code:
+```{.scala}
+def apply[T](f: => T): Future[T]
 ```
 ]
 ---
-# Loops
+# ScalaCheck
 .left-column[
-  ## Reference
-  ## While
-  ## Do-while
-  ## Are the same
+  ## It's hard
 ]
 .right-column[
-Features:
 
-- Simplest ones, so taught first
+- Writing property tests is easy for mappers only
 
-- Mutually replaceable
+- Property testing of business logics is difficult
 
-- Relevant to imperative code only
+- Especially with multiple parameters
+]
+---
+# ScalaCheck
+.left-column[
+  ## It's hard
+  ## Fail much
+]
+.right-column[
+No! It is not _just_ difficult. Sometimes it:
 
-- Are raplacable by tail recursive function
+  - makes you hopeless
+
+  - and depressed
+
+We have already rewritten our scalacheck tests for 3 times because of a very high entry level.
+]
+---
+# ScalaCheck
+.left-column[
+  ## It's hard
+  ## Fail much
+]
+.right-column[
+No! It is not _just_ difficult. Sometimes it:
+
+  - makes you hopeless
+
+  - and depressed
+
+We have already rewritten our scalacheck tests for 3 times because of a very high entry level.
+
+I know I work for a great company ;)
+]
+---
+# ScalaCheck
+.left-column[
+  ## It's hard
+  ## Fail much
+  ## Be rewarded
+]
+.right-column[
+
+- Catches almost all corner cases
+
+- And not only corner cases
+
+]
+---
+# ScalaCheck
+.left-column[
+  ## It's hard
+  ## Fail much
+  ## Be rewarded
+]
+.right-column[
+
+- Catches almost all corner cases
+
+- And not only corner cases
+
+- Finally, tests say how a code works:
+
+```{.scala}
+testCaseWithResult => {
+  val recommendedIds = testCaseWithResult.products.ids
+  recommendedIds should equal(recommendedIds.distinct)
+}```
 ]
 ---
 # Loops
