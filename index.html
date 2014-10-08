@@ -232,6 +232,23 @@ So, we are not evil :)
 
 ]
 ---
+# DCO
+.left-column[
+  ## Reference
+  ## Which means
+  ## We work with
+  ## Requirements
+]
+.right-column[
+
+- < 100ms
+
+- highly available
+
+- scalable
+
+]
+---
 # Storage
 .left-column[
   ## Cassandra
@@ -251,6 +268,8 @@ Users' profiles:
 - Great drivers
 
 - Written in Java :)
+
+- Runs on any hardware
 
 ]
 ---
@@ -661,20 +680,70 @@ Rule of thumb:
 # Akka
 .left-column[
   ## Rule
-  ## FSM
+  ## Advise
 ]
 .right-column[
-![FSM](fsm.jpg)
+
+Akka does not eliminate states, it just makes it easier to handle
+
+- Use Finite State Machine
+
+- Or become/unbecome
+
 ]
 ---
 # Akka
 .left-column[
   ## Rule
-  ## FSM
-  ## Becomes Unbecomes
+  ## Advise
+  ## Transitions
 ]
 .right-column[
-![FSM](fsm.jpg)
+
+If you are waiting for chunk, and:
+
+- Get new chunk, then collect it
+
+- Get a flag of last chunk, then go to finite state
+
+- Get a flag that a parser needs more data, then go to starvation state
+
+```{.scala}
+private def receivingChunksState(): Receive = {
+  case m: MessageChunk =>
+    bytes = bytes ++ m.data.toByteString
+  case ChunkedMessageEnd =>
+    context.become(noMoreChunks)
+  case MoreDataNeeded =>
+    if (bytes.nonEmpty) feedAll()
+    else context.become(starving, discardOld = false)
+}
+```
+]
+---
+# Akka
+.left-column[
+  ## Rule
+  ## Advise
+  ## Transitions
+]
+.right-column[
+If you are in starvation state, and:
+
+- Get new chunk, then send it to parser and get back to previous state
+
+- Get a flag of last chunk, then signal a parser and got to finite state
+
+```{.scala}
+private def starvingState(): Receive = {
+  case m: MessageChunk =>
+    parser ! FeedData(m.data.toByteString)
+    context.unbecome()
+  case ChunkedMessageEnd =>
+    parser ! NoMoreDataAvailable
+    context.become(finalizing())
+}
+```
 ]
 ---
 # Conclusion
@@ -685,7 +754,7 @@ Rule of thumb:
 
 - We do serious things with Scala
 
-- Is is already mature
+- Is is already mature, there is nothing to wait for
 
 ]
 ---
@@ -706,6 +775,8 @@ We also have (in our team):
 - Bash
 
 - C#
+
+- Java libraries, if they are good
 
 - And even Haskell 
 ]
@@ -734,6 +805,10 @@ layout: true
 class: center, middle
 
 # Thank you!
+
+## @poznia
+
+## http://github.com/vipo/how_we_use_scala
 
 ---
     </textarea>
