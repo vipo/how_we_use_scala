@@ -407,7 +407,7 @@ All internals (layers) must be asynchronous:
 
 - Service gets params, performs some BL, calls repository and immediately return Future of a result
 
-- Repositiry gets params, calls storage's driver which immediately returns Future of a result:
+- Repositiry gets params, calls storage's driver which immediately returns (Google's) Future of a result (imlicit magic):
 
 ```{.scala}
 val rs:ResultSetFuture = session.executeAsync(statement)
@@ -741,7 +741,7 @@ private def starvingState(): Receive = {
     context.unbecome()
   case ChunkedMessageEnd =>
     parser ! NoMoreDataAvailable
-    context.become(finalizing())
+    context.become(finalizing)
 }
 ```
 ]
