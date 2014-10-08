@@ -407,7 +407,7 @@ All internals (layers) must be asynchronous:
 
 - Service gets params, performs some BL, calls repository and immediately return Future of a result
 
-- Repositiry gets params, calls storage's driver which immediately returns (Google's) Future of a result (imlicit magic):
+- Repositiry gets params, calls storage's driver which immediately returns (Google's) Future of a result (implicit magic):
 
 ```{.scala}
 val rs:ResultSetFuture = session.executeAsync(statement)
