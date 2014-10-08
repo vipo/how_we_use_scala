@@ -383,7 +383,7 @@ Why so awesome?
 ```{.scala}
 test("delete profile") {
   val service = mock[Service]
-  service.deleteProfile(123456789, 123) returns Future()
+  service.deleteProfile(123456789) returns Future()
   val resource = new ProfileResource(service)
 
   val request = Request(DELETE, "/?c=123456789&s=123")
