@@ -247,6 +247,7 @@ So, we are not evil :)
 
 - scalable
 
+- ... and all other _buzzwords_ :)
 ]
 ---
 # Storage
@@ -288,6 +289,10 @@ Products:
 
 - Very fast
 
+- Written in C
+
+- Master &ndash; slave (sentinels)
+
 - _but_
 
 ]
@@ -307,8 +312,58 @@ Products:
 
 - Very fast
 
+- Written in C
+
+- Master &ndash; slave (sentinels)
+
 - _but_ choosy, requires a lot of tuning before giving awesome results
 
+]
+---
+# Philosophy
+.left-column[
+  ## Definition
+]
+.right-column[
+
+From the source of all my knowledge &mdash; Wikipedia:
+
+In computer science, functional programming is
+a programming paradigm, a style of building
+the structure and elements of computer programs,
+that treats computation as the evaluation of
+mathematical functions and avoids changing-state and
+mutable data.
+
+]
+---
+# Philosophy
+.left-column[
+  ## Definition
+  ## In practice
+]
+.right-column[
+
+Is it FP or OOP? :)
+
+```{.scala}
+def executeRedisPoolAsync[T](jedisPool: Pool[Jedis],
+  statement: Jedis => T): Future[T] = {
+    def run(): (Jedis, Try[T]) = {
+      val connection = jedisPool.getResource
+      (connection, Try(statement(connection)))
+    }
+    futurePool.apply(run()).map {
+      case (jedis, Success(result)) =>
+        jedisPool.returnResource(jedis)
+        result
+      case (jedis, Failure(t)) =>
+        jedisPool.returnBrokenResource(jedis)
+        throw t
+    }
+  }
+
+```
 ]
 ---
 # Cool stuff
@@ -353,10 +408,24 @@ Products:
 
 - Scalatest
 
-- Finagle is awesome for testing
+- Mockito
 
 - Scalacheck
 
+- JUnit (as a test launcher)
+]
+---
+# Cool stuff
+.left-column[
+  ## We code
+  ## We test
+  ## We build
+]
+.right-column[
+
+- Maven, just because TeamCity understands it well
+
+- We have a single Java file (which maybe eventually will go to Jedis)
 ]
 ---
 # Finagle
@@ -368,8 +437,11 @@ Your server is a function:
 ```{.scala}
 (Request => Future[Response])
 ```
-
-As simple as that!
+Which might have a filter:
+```{.scala}
+((Request, Service[Request, Response]) => Future[Response])
+```
+Read "Your Server as a Function" paper for reasoning.
 ]
 ---
 # Finagle
@@ -442,6 +514,15 @@ Call-by-name parameters save many lines of code:
 ```{.scala}
 def apply[T](f: => T): Future[T]
 ```
+]
+---
+# Beware
+.left-column[
+  ## Twitter futures
+]
+.right-column[
+
+- Are very easy to missuse
 ]
 ---
 # ScalaCheck
@@ -744,6 +825,56 @@ private def starvingState(): Receive = {
     context.become(finalizing)
 }
 ```
+]
+---
+# Oh, you use Scala?
+.left-column[
+  ## Slow?
+]
+.right-column[
+
+- How slow?
+
+- Any benefits?
+
+]
+---
+# Oh, you use Scala?
+.left-column[
+  ## Slow?
+  ## What helps
+]
+.right-column[
+
+Last optimisations _really_ helped:
+
+- Direct call to Cassandra nodes
+
+- Raw data instead of json to save traffic
+
+- Redis persistence on slave
+
+- Calculate hashes: do not write if you can
+
+- Heavy calculations (i.e. set diffs) on slaves
+
+]
+---
+# Oh, you use Scala?
+.left-column[
+  ## Slow?
+  ## What helps
+  ## So what?
+]
+.right-column[
+
+Scala stays Scala:
+
+- No reasons to use mutable data structures
+
+- No need to write Java-style code
+
+- ... all major optimisations are not language related.
 ]
 ---
 # Conclusion
