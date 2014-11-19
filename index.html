@@ -503,6 +503,27 @@ But not all drivers a non-blocking. We have Redis, remember? ;)
 
 - Even the best ones, like Jedis
 
+Glueing up async thing is easy. But mixing async and sync code is a nightmare.
+]
+---
+# Non-blocking at all
+.left-column[
+  ## Async
+  ## Not async
+  ## Beware
+]
+.right-column[
+Twitter Futures
+
+```{.scala}
+def apply[T](f: => T): Future[T]
+```
+- Are pure (not poluted by execution context)
+
+- Signature is very promising
+
+- But easy to missuse
+
 Twitter's Future pool saves the day:
 ```{.scala}
 val futurePool: ExecutorServiceFuturePool =
@@ -510,19 +531,6 @@ val futurePool: ExecutorServiceFuturePool =
 val result: Future[Long] =
   futurePool(jedisPool.getResource.scard("key"))
 ```
-Call-by-name parameters save many lines of code:
-```{.scala}
-def apply[T](f: => T): Future[T]
-```
-]
----
-# Beware
-.left-column[
-  ## Twitter futures
-]
-.right-column[
-
-- Are very easy to missuse
 ]
 ---
 # ScalaCheck
@@ -643,6 +651,9 @@ We use it as a server side for XML upload
   ## Chunks
 ]
 .right-column[
+
+"Transfer-Encoding: chunked"
+
 ```{.xml}
 <root
 ```
@@ -693,7 +704,7 @@ Current situation:
 
   - You subscribe to events (which seems to be asynchronous behaviour)
 
-  - _But_, source of data is blocking: InputStream, File, ...
+  - _But_, source of data is blocking: InputStream, File, ... &mdash; current thread blocks if no data available.
 ]
 ---
 # Spray.io
