@@ -241,13 +241,15 @@ So, we are not evil :)
 ]
 .right-column[
 
-- < 100ms
-
 - highly available
 
 - scalable
 
-- ... and all other _buzzwords_ :)
+- XX 000 qps
+
+- < 100 ms 99% for very critical api
+
+- < 200 ms 99% for other but we are working on that :)
 ]
 ---
 # Storage
@@ -473,19 +475,17 @@ test("delete profile") {
   ## Async
 ]
 .right-column[
-All internals (layers) must be asynchronous:
-
-- Finagle's resource gets params and calls service, service immediately returns Future of a result
-
-- Service gets params, performs some BL, calls repository and immediately return Future of a result
-
-- Repositiry gets params, calls storage's driver which immediately returns (Google's) Future of a result (implicit magic):
+All internals must be asynchronous:
 
 ```{.scala}
-val rs:ResultSetFuture = session.executeAsync(statement)
-```
+for {
+  defaultProducts <- getDefaultProducts(t)
+  recommendations <- getRecommendationsOrDefault(t, p, defaultProducts, count)
+  recommendationsFirstPage = recommendations.take(pageSize)
+  metadata <- getMetadata(t, recommendationsFirstPage)
+} yield new EshopRecommendedProducts(recommendations, metadata)
 
-Everything is glued up via _map_, _flatMap_ and Future's helping methods like _join_. Fanagle handles everything.
+```
 ]
 ---
 # Non-blocking at all
@@ -626,6 +626,8 @@ We use it as a server side for XML upload
 
 - Finds and processes data on the fly
 
+- Applies business logics
+
 - And, _once again_
 ]
 ---
@@ -642,7 +644,16 @@ We use it as a server side for XML upload
 
 - Finds and processes data on the fly
 
+- Applies business logics
+
 - And, _once again_, non-blocking
+
+- So we can:
+
+  - Process data while it is being uploaded 
+  
+  - Use back-pressure
+
 ]
 ---
 # Spray.io
@@ -705,6 +716,9 @@ Current situation:
   - You subscribe to events (which seems to be asynchronous behaviour)
 
   - _But_, source of data is blocking: InputStream, File, ... &mdash; current thread blocks if no data available.
+
+- The second issue: we cannot say "Stop" to incomming data. 
+
 ]
 ---
 # Spray.io
@@ -857,7 +871,7 @@ private def starvingState(): Receive = {
 ]
 .right-column[
 
-Last optimisations _really_ helped:
+Last optimizations _really_ helped:
 
 - Direct call to Cassandra nodes
 
@@ -885,7 +899,7 @@ Scala stays Scala:
 
 - No need to write Java-style code
 
-- ... all major optimisations are not language related.
+- ... all major optimizations are not language related.
 ]
 ---
 # Conclusion
@@ -895,6 +909,8 @@ Scala stays Scala:
 .right-column[
 
 - We do serious things with Scala
+
+- By _serious_ I mean "it earns money"
 
 - Is is already mature, there is nothing to wait for
 
@@ -914,34 +930,31 @@ We also have (in our team):
 
 - Javascript / Node.js
 
-- Bash
+- Bash (curl - xsltproc - curl)
 
-- C#
+- C# (still)
 
 - Java libraries, if they are good
 
 - And even Haskell 
 ]
 ---
-# Conclusion
-.left-column[
-  ## Scala
-  ## Other
-  ## Advice
-]
-.right-column[
-You can use any programming language
-]
----
-# Conclusion
-.left-column[
-  ## Scala
-  ## Other
-  ## Advice
-]
-.right-column[
-You can use any programming language as long as it's Scala :)
-]
+# Takeaways
+
+- Writing async code is easy
+
+- Mixing sync and async code is difficult, avoid it
+
+- Do not be purist (Twitter Futures)
+
+- Give QuickCheck a try
+
+- You need Akka if you have state
+
+- Back-pressure is difficult but it is an option
+
+- Your language is not slow, your algorithms are
+
 ---
 layout: true
 class: center, middle
