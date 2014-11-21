@@ -270,8 +270,6 @@ Users' profiles:
 
 - Great drivers
 
-- Written in Java :)
-
 - Runs on any hardware
 
 ]
@@ -346,8 +344,6 @@ mutable data.
 ]
 .right-column[
 
-Is it FP or OOP? :)
-
 ```{.scala}
 def executeRedisPoolAsync[T](jedisPool: Pool[Jedis],
   statement: Jedis => T): Future[T] = {
@@ -366,9 +362,12 @@ def executeRedisPoolAsync[T](jedisPool: Pool[Jedis],
   }
 
 ```
+- "Oh, it is OOP code"
+
+- "Last functional language I learned was Pascal"
 ]
 ---
-# Cool stuff
+# Stuff
 .left-column[
   ## We code
 ]
@@ -379,12 +378,14 @@ def executeRedisPoolAsync[T](jedisPool: Pool[Jedis],
 - Twitter's futures
 
 - Cassandra Datastax Java drivers (Google's futures)
+
+- Redis Java drivers
 
 - And, _sure_
 
 ]
 ---
-# Cool stuff
+# Stuff
 .left-column[
   ## We code
 ]
@@ -395,13 +396,15 @@ def executeRedisPoolAsync[T](jedisPool: Pool[Jedis],
 - Twitter's futures
 
 - Cassandra Datastax Java drivers (Google's futures)
+
+- Redis Java drivers
 
 - And, _sure_, we have Akka
 
 - ... and Spray
 ]
 ---
-# Cool stuff
+# Stuff
 .left-column[
   ## We code
   ## We test
@@ -417,7 +420,7 @@ def executeRedisPoolAsync[T](jedisPool: Pool[Jedis],
 - JUnit (as a test launcher)
 ]
 ---
-# Cool stuff
+# Stuff
 .left-column[
   ## We code
   ## We test
@@ -486,6 +489,7 @@ for {
 } yield new EshopRecommendedProducts(recommendations, metadata)
 
 ```
+Imagine this code in Java, C# or even F# ;)
 ]
 ---
 # Non-blocking at all
@@ -852,6 +856,38 @@ private def starvingState(): Receive = {
 ```
 ]
 ---
+# Akka
+.left-column[
+  ## Rule
+  ## Advise
+  ## Transitions
+  ## Back-pressure
+]
+.right-column[
+
+I still do not know what is more complicated:
+
+- Back-pressure
+]
+---
+# Akka
+.left-column[
+  ## Rule
+  ## Advise
+  ## Transitions
+  ## Back-pressure
+]
+.right-column[
+
+I still do not know what is more complicated:
+
+- Back-pressure
+
+- _or_ ScalaCheck ;)
+
+Too complicated &mdash; we do not use it.
+]
+---
 # Oh, you use Scala?
 .left-column[
   ## Slow?
@@ -902,29 +938,33 @@ Scala stays Scala:
 - ... all major optimizations are not language related.
 ]
 ---
-# Conclusion
+# Oh, you use Scala?
 .left-column[
-  ## Scala
+  ## Slow?
+  ## What helps
+  ## So what?
+  ## Why?
 ]
 .right-column[
+- It earns money
 
-- We do serious things with Scala
+- Is is already mature
 
-- By _serious_ I mean "it earns money"
-
-- Is is already mature, there is nothing to wait for
+- It is just a-better-java
 
 ]
 ---
-# Conclusion
+# Oh, you use Scala?
 .left-column[
-  ## Scala
-  ## Other
+  ## Slow?
+  ## What helps
+  ## So what?
+  ## Why?
+  ## Fans?
 ]
 .right-column[
-Yes, we are fans but not fanboys.
 
-We also have (in our team):
+No. We also have (in our team):
 
 - Python
 
@@ -941,17 +981,77 @@ We also have (in our team):
 ---
 # Takeaways
 
-- Writing async code is easy
+- You do not need to understand Monads to use them
+
+---
+# Takeaways
+
+- You do not need to understand Monads to use them
 
 - Mixing sync and async code is difficult, avoid it
 
-- Do not be purist (Twitter Futures)
+---
+# Takeaways
+
+- You do not need to understand Monads to use them
+
+- Mixing sync and async code is difficult, avoid it
+
+- Be explicit
+
+---
+# Takeaways
+
+- You do not need to understand Monads to use them
+
+- Mixing sync and async code is difficult, avoid it
+
+- Be explicit
 
 - Give QuickCheck a try
 
-- You need Akka if you have state
+---
+# Takeaways
 
-- Back-pressure is difficult but it is an option
+- You do not need to understand Monads to use them
+
+- Mixing sync and async code is difficult, avoid it
+
+- Be explicit
+
+- Give QuickCheck a try
+
+- You might need Akka only if you have state
+
+---
+# Takeaways
+
+- You do not need to understand Monads to use them
+
+- Mixing sync and async code is difficult, avoid it
+
+- Be explicit
+
+- Give QuickCheck a try
+
+- You might need Akka only if you have state
+
+- Back-pressure is not trivial
+
+---
+# Takeaways
+
+- You do not need to understand Monads to use them
+
+- Mixing sync and async code is difficult, avoid it
+
+- Be explicit
+
+- Give QuickCheck a try
+
+- You might need Akka only if you have state
+
+- Back-pressure is not trivial
 
 - Your language is not slow, your algorithms are
 
