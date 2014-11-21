@@ -195,6 +195,8 @@ layout: false
 .right-column[
 
 We are optimizing a content of banners especially for you based on what we know about you.
+
+There are many retargetting models.
 ]
 
 ---
@@ -249,7 +251,7 @@ So, we are not evil :)
 
 - < 100 ms 99% for very critical api
 
-- < 200 ms 99% for other but we are working on that :)
+- < 200 ms 99% for other apis but we are working on that :)
 ]
 ---
 # Storage
@@ -258,7 +260,7 @@ So, we are not evil :)
 ]
 .right-column[
 
-Users' profiles:
+For users' profiles.
 
 - _A lot_ of data
 
@@ -268,7 +270,7 @@ Users' profiles:
 
 - Monitoring
 
-- Great drivers
+- Great CQL drivers
 
 - Runs on any hardware
 
@@ -281,7 +283,7 @@ Users' profiles:
 ]
 .right-column[
 
-Products:
+For products.
 
 - Not that much data
 
@@ -304,7 +306,7 @@ Products:
 ]
 .right-column[
 
-Products:
+For products.
 
 - Not that much data
 
@@ -332,7 +334,24 @@ In computer science, functional programming is
 a programming paradigm, a style of building
 the structure and elements of computer programs,
 that treats computation as the evaluation of
-mathematical functions and avoids changing-state and
+mathematical functions and avoids changing state and
+mutable data.
+
+]
+---
+# Philosophy
+.left-column[
+  ## Definition
+]
+.right-column[
+
+From the source of all my knowledge &mdash; Wikipedia:
+
+In computer science, functional programming is
+a programming paradigm, a style of building
+the structure and elements of computer programs,
+that treats computation as the evaluation of
+mathematical functions and __avoids__ changing state and
 mutable data.
 
 ]
@@ -362,26 +381,7 @@ def executeRedisPoolAsync[T](jedisPool: Pool[Jedis],
   }
 
 ```
-- "Oh, it is OOP code"
-
-- "Last functional language I learned was Pascal"
-]
----
-# Stuff
-.left-column[
-  ## We code
-]
-.right-column[
-
-- Twitter's Finagle
-
-- Twitter's futures
-
-- Cassandra Datastax Java drivers (Google's futures)
-
-- Redis Java drivers
-
-- And, _sure_
+"Oh, it is like OOP code!"
 
 ]
 ---
@@ -399,9 +399,7 @@ def executeRedisPoolAsync[T](jedisPool: Pool[Jedis],
 
 - Redis Java drivers
 
-- And, _sure_, we have Akka
-
-- ... and Spray
+- Akka and Spray
 ]
 ---
 # Stuff
@@ -415,22 +413,24 @@ def executeRedisPoolAsync[T](jedisPool: Pool[Jedis],
 
 - Mockito
 
-- Scalacheck
+- ScalaCheck
 
-- JUnit (as a test launcher)
+- JUnit (as a launcher)
 ]
 ---
 # Stuff
 .left-column[
   ## We code
   ## We test
-  ## We build
+  ## We build &amp; release
 ]
 .right-column[
 
 - Maven, just because TeamCity understands it well
 
 - We have a single Java file (which maybe eventually will go to Jedis)
+
+- We release a few times per day if needed
 ]
 ---
 # Finagle
@@ -484,8 +484,7 @@ All internals must be asynchronous:
 for {
   defaultProducts <- getDefaultProducts(t)
   recommendations <- getRecommendationsOrDefault(t, p, defaultProducts, count)
-  recommendationsFirstPage = recommendations.take(pageSize)
-  metadata <- getMetadata(t, recommendationsFirstPage)
+  metadata <- getMetadata(t, recommendations.take(pageSize))
 } yield new EshopRecommendedProducts(recommendations, metadata)
 
 ```
@@ -562,7 +561,7 @@ No! It is not _just_ difficult. Sometimes it:
 
   - and depressed
 
-We have already rewritten our scalacheck tests for 3 times because of a very high entry level.
+We have already rewritten our ScalaCheck tests for 3 times because of a very high entry level.
 ]
 ---
 # ScalaCheck
@@ -577,7 +576,7 @@ No! It is not _just_ difficult. Sometimes it:
 
   - and depressed
 
-We have already rewritten our scalacheck tests for 3 times because of a very high entry level.
+We have already rewritten our ScalaCheck tests for 3 times because of a very high entry level.
 
 I know I work for a great company ;)
 ]
@@ -624,11 +623,9 @@ testCaseWithResult => {
 .right-column[
 We use it as a server side for XML upload
 
-- Chunked upload
-
 - Huge files (gigabytes, potentialy unlimited)
 
-- Finds and processes data on the fly
+- Chunked upload
 
 - Applies business logics
 
@@ -642,11 +639,9 @@ We use it as a server side for XML upload
 .right-column[
 We use it as a server side for XML upload
 
-- Chunked upload
-
 - Huge files (gigabytes, potentialy unlimited)
 
-- Finds and processes data on the fly
+- Chunked upload
 
 - Applies business logics
 
@@ -697,7 +692,7 @@ Current situation:
 
 - There are a lot of pull-parsers for jvm
 
-- But all of them are blocking:
+- But almost all of them are blocking:
 
   - You subscribe to events (which seems to be asynchronous behaviour)
 
@@ -715,7 +710,7 @@ Current situation:
 
 - There are a lot of pull-parsers for jvm
 
-- But all of them are blocking:
+- But almost all of them are blocking:
 
   - You subscribe to events (which seems to be asynchronous behaviour)
 
